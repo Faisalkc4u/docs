@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://api.example.com"
+      "url": "https://faisalshop.mvp-apps.ae/"
     }
   ],
   "paths": {
@@ -20,7 +20,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password"],
+                "required": [
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -76,7 +79,7 @@
               }
             }
           },
-          "401": {
+          "400": {
             "description": "Invalid credentials",
             "content": {
               "application/json": {
@@ -89,16 +92,6 @@
                       "error": "Sorry!, You have entered a wrong email or password"
                     }
                   }
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationError"
                 }
               }
             }
@@ -122,50 +115,136 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "tenant_id": { "type": ["integer", "null"] },
-          "name": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "phone": { "type": ["string", "null"] },
-          "country_code": { "type": ["string", "null"] },
-          "email_verified_at": { "type": ["string", "null"], "format": "date-time" },
-          "phone_verified_at": { "type": ["string", "null"], "format": "date-time" },
-          "user_type": { "type": "string", "example": "CONSUMER" },
-          "photo_url": { "type": ["string", "null"], "format": "uri" },
-          "theme": { "type": "string", "example": "system" },
-          "language": { "type": "string", "example": "en" },
-          "timezone": { "type": ["string", "null"] },
-          "email_marketing": { "type": "string", "example": "0" },
-          "email_system": { "type": "string", "example": "1" },
-          "push_system": { "type": "string", "example": "1" },
-          "is_active": { "type": "string", "example": "1" },
-          "created_at": { "type": "string", "format": "date-time" },
-          "updated_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "integer"
+          },
+          "tenant_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "country_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email_verified_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "phone_verified_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "user_type": {
+            "type": "string",
+            "example": "CONSUMER"
+          },
+          "photo_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "theme": {
+            "type": "string",
+            "example": "system"
+          },
+          "language": {
+            "type": "string",
+            "example": "en"
+          },
+          "timezone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email_marketing": {
+            "type": "string",
+            "example": "0"
+          },
+          "email_system": {
+            "type": "string",
+            "example": "1"
+          },
+          "push_system": {
+            "type": "string",
+            "example": "1"
+          },
+          "is_active": {
+            "type": "string",
+            "example": "1"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "AuthResponse": {
         "type": "object",
-        "required": ["token", "user"],
+        "required": [
+          "token",
+          "user"
+        ],
         "properties": {
-          "token": { "type": "string", "description": "Bearer token" },
-          "user": { "$ref": "#/components/schemas/User" }
+          "token": {
+            "type": "string",
+            "description": "Bearer token"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
         }
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "error": { "type": "string" }
+          "error": {
+            "type": "string"
+          }
         }
       },
       "ValidationError": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" },
+          "message": {
+            "type": "string"
+          },
           "errors": {
             "type": "object",
             "additionalProperties": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
