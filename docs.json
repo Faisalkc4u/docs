@@ -61,6 +61,21 @@
             "pages": [
               "api-reference/endpoint/login"
             ]
+          },
+          {
+            "group": "Products",
+            "pages": [
+              "api-reference/products/list"
+            ]
+          },
+          {
+            "group": "Categories",
+            "pages": [
+              "api-reference/categories/list",
+              "api-reference/categories/create",
+              "api-reference/categories/update",
+              "api-reference/categories/delete"
+            ]
           }
         ]
       }
