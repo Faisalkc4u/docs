@@ -76,6 +76,12 @@
               "api-reference/categories/update",
               "api-reference/categories/delete"
             ]
+          },
+          {
+            "group": "Tenants",
+            "pages": [
+              "api-reference/tenants/list"
+            ]
           }
         ]
       }

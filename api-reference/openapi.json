@@ -112,6 +112,40 @@
         }
       }
     },
+    "/api/v2/admin/category": {
+      "get": {
+        "summary": "Get categories list",
+        "operationId": "getCategories",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer {token}"
+            }
+          },
+          {
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of categories",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/api/v2/admin/products": {
       "get": {
         "summary": "Get products list",
