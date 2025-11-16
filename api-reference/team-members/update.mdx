@@ -1,0 +1,65 @@
+---
+title: "Update Team Member Role"
+openapi: "POST /api/v2/admin/team-members/{tenantId}/{userId}"
+---
+
+## Overview
+
+Update a team member's role within a tenant. This allows you to promote members to admins or demote admins to members.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the specified tenant
+
+## Validation Rules
+
+- `role`: Required, must be either "ADMIN" or "MEMBER"
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/team-members/1/5 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "role": "ADMIN"
+  }'
+```
+
+```javascript
+await axios.post(
+  `/api/v2/admin/team-members/${tenantId}/${userId}`,
+  { role: 'ADMIN' },
+  {
+    headers: { Authorization: `Bearer ${token}` }
+  }
+);
+```
+
+## Error Responses
+
+### User Not Found (404)
+```json
+{
+  "error": "User not found"
+}
+```
+
+### Not a Member (400)
+```json
+{
+  "error": "User is not a member of this Organization"
+}
+```
+
+### Validation Error (422)
+```json
+{
+  "message": "The role field is required.",
+  "errors": {
+    "role": ["The role field is required."]
+  }
+}
+```

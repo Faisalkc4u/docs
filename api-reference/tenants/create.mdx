@@ -1,0 +1,50 @@
+---
+title: "Create Tenant"
+openapi: "POST /api/v2/admin/tenants"
+---
+
+## Overview
+
+Create a new tenant (organization). The authenticated user will automatically be added as an ADMIN of the new tenant.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+
+## Automatic Admin Assignment
+
+When you create a tenant, you are automatically assigned as an ADMIN, giving you full control over the organization.
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/tenants \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "My New Store"
+  }'
+```
+
+```javascript
+await axios.post(
+  '/api/v2/admin/tenants',
+  {
+    name: 'My New Store'
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```
+
+## Next Steps
+
+After creating a tenant:
+1. Add team members using the team member endpoints
+2. Create categories for your products
+3. Add products to your catalog
+4. Configure webhooks for integrations

@@ -1,0 +1,70 @@
+---
+title: "Add Team Member"
+openapi: "POST /api/v2/admin/team-members/{tenantId}"
+---
+
+## Overview
+
+Add a new or existing user to a tenant. If the user doesn't exist, a new account will be created automatically.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the specified tenant
+
+## Behavior
+
+- If the email doesn't exist in the system, creates a new user account
+- If the user exists, adds them to the tenant with the specified role
+- Sets `is_active` to true and updates `last_active_at`
+- Fires a `UserRegistered` event for webhook integrations
+
+## Validation Rules
+
+- `email`: Required, must be a valid email format
+- `role`: Required, must be either "ADMIN" or "MEMBER"
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/team-members/1 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "newuser@example.com",
+    "role": "MEMBER"
+  }'
+```
+
+```javascript
+await axios.post(
+  `/api/v2/admin/team-members/${tenantId}`,
+  {
+    email: 'newuser@example.com',
+    role: 'MEMBER'
+  },
+  {
+    headers: { Authorization: `Bearer ${token}` }
+  }
+);
+```
+
+## Error Responses
+
+### Already a Member (400)
+```json
+{
+  "error": "user@example.com is already a member of this Organization"
+}
+```
+
+### Validation Error (422)
+```json
+{
+  "message": "The email field must be a valid email address.",
+  "errors": {
+    "email": ["The email field must be a valid email address."]
+  }
+}
+```

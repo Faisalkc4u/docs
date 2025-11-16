@@ -1,0 +1,48 @@
+---
+title: "Update Product"
+openapi: "POST /api/v2/admin/products/{id}"
+---
+
+## Overview
+
+Update an existing product's information. Only products belonging to your tenant can be updated.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+- Requires X-Tenant-ID header
+
+## Partial Updates
+
+You can update specific fields without providing all product data. Only include the fields you want to change.
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/products/42 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "price": 29.99,
+    "stock": 75
+  }'
+```
+
+```javascript
+await axios.post(
+  `/api/v2/admin/products/${productId}`,
+  {
+    price: 29.99,
+    stock: 75
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Tenant-ID': tenantId
+    }
+  }
+);
+```

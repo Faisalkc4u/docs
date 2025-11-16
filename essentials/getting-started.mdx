@@ -1,0 +1,205 @@
+---
+title: "Getting Started"
+description: "Quick start guide for Urban Things API"
+---
+
+## Welcome
+
+This guide will help you get started with the Urban Things API in minutes. You'll learn how to authenticate, create a tenant, and start managing your e-commerce platform.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+- A valid email address
+- An API client (cURL, Postman, or your preferred tool)
+- Basic understanding of REST APIs
+
+## Step 1: Create an Account
+
+Register a new user account:
+
+```bash
+curl -X POST https://faisalshop.mvp-apps.ae/api/v2/admin/register \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Your Name",
+    "email": "your@email.com",
+    "password": "securepassword123",
+    "password_confirmation": "securepassword123"
+  }'
+```
+
+## Step 2: Login
+
+Authenticate to receive your access token:
+
+```bash
+curl -X POST https://faisalshop.mvp-apps.ae/api/v2/admin/login \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "your@email.com",
+    "password": "securepassword123"
+  }'
+```
+
+**Response:**
+```json
+{
+  "token": "322|gA24v1gzIJme72431KwUqyvPRotoRrIpMNAy3mXhe513ff48",
+  "user": {
+    "id": 17,
+    "name": "Your Name",
+    "email": "your@email.com",
+    ...
+  }
+}
+```
+
+<Note>
+Save the token - you'll need it for all subsequent requests!
+</Note>
+
+## Step 3: Create a Tenant
+
+Create your organization (tenant):
+
+```bash
+curl -X POST https://faisalshop.mvp-apps.ae/api/v2/admin/tenants \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "My Store"
+  }'
+```
+
+You'll automatically be assigned as an ADMIN of the new tenant.
+
+## Step 4: Get Your Tenant ID
+
+Check your tenants:
+
+```bash
+curl -X GET https://faisalshop.mvp-apps.ae/api/v2/admin/who_am_i \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+**Response:**
+```json
+{
+  "user": {...},
+  "tenants": [
+    {
+      "id": 123,
+      "name": "My Store",
+      "role": "ADMIN"
+    }
+  ]
+}
+```
+
+<Note>
+Save your tenant ID - you'll use it in the X-Tenant-ID header!
+</Note>
+
+## Step 5: Create a Category
+
+Now you can start building your catalog:
+
+```bash
+curl -X POST https://faisalshop.mvp-apps.ae/api/v2/admin/category/create \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Electronics",
+    "description": "Electronic devices and accessories"
+  }'
+```
+
+## Step 6: Create a Product
+
+Add your first product:
+
+```bash
+curl -X POST https://faisalshop.mvp-apps.ae/api/v2/admin/products \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Wireless Headphones",
+    "description": "Premium noise-cancelling headphones",
+    "price": 199.99,
+    "stock": 50,
+    "category_id": 1
+  }'
+```
+
+## Step 7: Add Team Members
+
+Invite team members to your organization:
+
+```bash
+curl -X POST https://faisalshop.mvp-apps.ae/api/v2/admin/team-members/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "teammate@example.com",
+    "role": "MEMBER"
+  }'
+```
+
+## Quick Reference
+
+### Authentication Headers
+
+All authenticated requests need:
+```bash
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Tenant Context
+
+Most endpoints need:
+```bash
+X-Tenant-ID: YOUR_TENANT_ID
+```
+
+### Common Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Products" icon="box" href="/api-reference/products/list">
+    Manage your product catalog
+  </Card>
+  <Card title="Categories" icon="folder" href="/api-reference/categories/list">
+    Organize products into categories
+  </Card>
+  <Card title="Team Members" icon="users" href="/api-reference/team-members/list">
+    Manage your team
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/api-reference/webhooks/list">
+    Set up integrations
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+  <Step title="Explore the API">
+    Browse the [API Reference](/api-reference/introduction) for all available endpoints
+  </Step>
+  <Step title="Learn Multi-Tenancy">
+    Understand how [multi-tenancy](/essentials/multi-tenancy) works
+  </Step>
+  <Step title="Set Up Webhooks">
+    Configure [webhooks](/api-reference/webhooks/create) for real-time notifications
+  </Step>
+  <Step title="Build Your App">
+    Start integrating the API into your application
+  </Step>
+</Steps>
+
+## Need Help?
+
+<Card title="Contact Support" icon="envelope" href="mailto:info@faisalkc.com">
+  Have questions? Reach out to our support team
+</Card>

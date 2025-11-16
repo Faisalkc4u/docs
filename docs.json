@@ -11,38 +11,21 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "essentials/getting-started"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "essentials/architecture",
+              "essentials/multi-tenancy",
+              "essentials/webhooks-events"
             ]
           }
         ]
@@ -59,13 +42,39 @@
           {
             "group": "Authentication",
             "pages": [
-              "api-reference/endpoint/login"
+              "api-reference/endpoint/login",
+              "api-reference/auth/register",
+              "api-reference/auth/whoami",
+              "api-reference/auth/logout"
+            ]
+          },
+          {
+            "group": "Tenants",
+            "pages": [
+              "api-reference/tenants/list",
+              "api-reference/tenants/create",
+              "api-reference/tenants/get",
+              "api-reference/tenants/update",
+              "api-reference/tenants/delete"
+            ]
+          },
+          {
+            "group": "Team Members",
+            "pages": [
+              "api-reference/team-members/list",
+              "api-reference/team-members/create",
+              "api-reference/team-members/update",
+              "api-reference/team-members/delete"
             ]
           },
           {
             "group": "Products",
             "pages": [
-              "api-reference/products/list"
+              "api-reference/products/list",
+              "api-reference/products/create",
+              "api-reference/products/get",
+              "api-reference/products/update",
+              "api-reference/products/delete"
             ]
           },
           {
@@ -73,14 +82,17 @@
             "pages": [
               "api-reference/categories/list",
               "api-reference/categories/create",
+              "api-reference/categories/toggle",
               "api-reference/categories/update",
               "api-reference/categories/delete"
             ]
           },
           {
-            "group": "Tenants",
+            "group": "Webhooks",
             "pages": [
-              "api-reference/tenants/list"
+              "api-reference/webhooks/list",
+              "api-reference/webhooks/create",
+              "api-reference/webhooks/delete"
             ]
           }
         ]

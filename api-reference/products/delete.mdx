@@ -1,0 +1,41 @@
+---
+title: "Delete Product"
+openapi: "DELETE /api/v2/admin/products/{id}"
+---
+
+## Overview
+
+Delete a product from your catalog. This is a permanent action and cannot be undone.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+- Requires X-Tenant-ID header
+
+## Important Notes
+
+- Deletion is permanent
+- Consider soft deletes or archiving for better data retention
+- Check for existing orders before deleting products
+
+## Example Usage
+
+```bash
+curl -X DELETE \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/products/42 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123'
+```
+
+```javascript
+await axios.delete(
+  `/api/v2/admin/products/${productId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Tenant-ID': tenantId
+    }
+  }
+);
+```

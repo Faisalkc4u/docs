@@ -1,0 +1,38 @@
+---
+title: "Delete Webhook"
+openapi: "DELETE /api/v2/admin/webhooks/{tenantId}"
+---
+
+## Overview
+
+Unsubscribe from webhook events. This will stop sending notifications to your webhook URL.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the tenant
+
+## Important Notes
+
+- Deleting a webhook is permanent
+- In-flight deliveries may still be attempted
+- Historical delivery records are preserved
+
+## Example Usage
+
+```bash
+curl -X DELETE \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/webhooks/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+await axios.delete(
+  `/api/v2/admin/webhooks/${tenantId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```

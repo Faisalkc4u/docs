@@ -1,0 +1,228 @@
+---
+title: "Multi-Tenancy Guide"
+description: "How multi-tenancy works in Urban Things"
+---
+
+## Overview
+
+Multi-tenancy allows multiple organizations to use the platform while keeping their data completely isolated. Each tenant operates independently with their own products, categories, orders, and team members.
+
+## How It Works
+
+### Tenant Resolution
+
+The system identifies the current tenant from the `X-Tenant-ID` header:
+
+```bash
+X-Tenant-ID: 123
+```
+
+This header should be included in all API requests that require tenant context.
+
+### Automatic Scoping
+
+Models using the `HasTenant` trait are automatically filtered:
+
+<CodeGroup>
+```php Laravel Model
+use App\HasTenant;
+
+class Product extends Model
+{
+    use HasTenant;
+    
+    protected $fillable = ['name', 'price'];
+    // tenant_id automatically managed
+}
+```
+
+```php Query Examples
+// Automatically filtered by X-Tenant-ID
+$products = Product::all();
+
+// Bypass tenant filter
+$allProducts = Product::withAnyTenant()->get();
+
+// Specific tenant
+$products = Product::forTenant($tenantId)->get();
+```
+</CodeGroup>
+
+## Tenant-Scoped Models
+
+These models belong to a single tenant:
+
+<CardGroup cols={2}>
+  <Card title="Catalog" icon="box">
+    - Products
+    - Categories
+    - Product Images
+  </Card>
+  <Card title="Operations" icon="cart-shopping">
+    - Orders
+    - Order Items
+    - Ratings
+  </Card>
+  <Card title="Integrations" icon="webhook">
+    - Webhooks
+    - Integration Outbox
+  </Card>
+  <Card title="Configuration" icon="gear">
+    - System Config
+    - Settings
+  </Card>
+</CardGroup>
+
+## Cross-Tenant Models
+
+These models exist across tenants:
+
+- **User** - Can belong to multiple tenants
+- **Tenant** - The organization itself
+- **TenantUser** - Pivot table linking users to tenants
+
+## User Roles
+
+Each user has a role per tenant:
+
+<Tabs>
+  <Tab title="ADMIN">
+    **Full Control**
+    - Add/remove team members
+    - Update member roles
+    - Manage products and categories
+    - Configure webhooks
+    - Update tenant settings
+  </Tab>
+  <Tab title="MEMBER">
+    **Limited Access**
+    - View team members
+    - Manage products and categories
+    - Process orders
+    - Cannot modify team or settings
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+### 1. Always Include X-Tenant-ID
+
+```bash
+curl -X GET https://api.example.com/api/v2/admin/products \
+  -H 'Authorization: Bearer TOKEN' \
+  -H 'X-Tenant-ID: 123'
+```
+
+### 2. Verify Tenant Membership
+
+Before accessing tenant resources:
+
+```php
+$isMember = auth()->user()->tenants()
+    ->where('tenant_id', $tenantId)
+    ->exists();
+
+if (!$isMember) {
+    abort(403, 'Access denied');
+}
+```
+
+### 3. Check Role for Sensitive Operations
+
+```php
+$isAdmin = auth()->user()->tenants()
+    ->where('tenant_id', $tenantId)
+    ->wherePivot('role', 'ADMIN')
+    ->exists();
+
+if (!$isAdmin) {
+    abort(403, 'Admin access required');
+}
+```
+
+### 4. Don't Manually Set tenant_id
+
+The `HasTenant` trait handles this automatically:
+
+```php
+// ❌ Bad - manual assignment
+$product = new Product();
+$product->tenant_id = $tenantId;
+$product->save();
+
+// ✅ Good - automatic from X-Tenant-ID
+$product = Product::create([
+    'name' => 'Product Name',
+    'price' => 99.99
+]);
+```
+
+## Security Considerations
+
+<Warning>
+Always verify tenant membership before showing data. The system returns empty results for unauthorized tenants rather than throwing errors, maintaining a consistent API experience.
+</Warning>
+
+### Tenant Isolation
+
+- Data is automatically scoped by tenant
+- Cross-tenant queries are prevented
+- Users can only access their tenants' data
+
+### Role Verification
+
+- ADMIN role required for team management
+- Role checks happen at the controller level
+- Middleware validates tenant access
+
+## Testing Multi-Tenancy
+
+```php
+public function test_user_cannot_see_other_tenant_data()
+{
+    $tenant1 = Tenant::create(['name' => 'Tenant 1']);
+    $tenant2 = Tenant::create(['name' => 'Tenant 2']);
+    
+    $product1 = Product::forTenant($tenant1->id)
+        ->create(['name' => 'Product 1']);
+    $product2 = Product::forTenant($tenant2->id)
+        ->create(['name' => 'Product 2']);
+    
+    // Set tenant context
+    $this->withHeader('X-Tenant-ID', $tenant1->id);
+    
+    // Should only see tenant1's products
+    $products = Product::all();
+    $this->assertCount(1, $products);
+    $this->assertEquals('Product 1', $products->first()->name);
+}
+```
+
+## Common Patterns
+
+### Switching Tenants
+
+Users can switch between their tenants by changing the X-Tenant-ID header:
+
+```javascript
+// Get user's tenants
+const { tenants } = await api.get('/api/v2/admin/who_am_i');
+
+// Switch to different tenant
+api.defaults.headers['X-Tenant-ID'] = tenants[0].id;
+```
+
+### Creating Tenant-Scoped Resources
+
+```javascript
+// Create product in current tenant
+await axios.post('/api/v2/admin/products', {
+  name: 'New Product',
+  price: 29.99
+}, {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'X-Tenant-ID': currentTenantId
+  }
+});
+```

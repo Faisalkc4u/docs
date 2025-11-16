@@ -1,23 +1,137 @@
 ---
-title: "Introduction"
-description: "This section showcases API endpoints"
+title: "API Introduction"
+description: "Multi-tenant e-commerce API with team management"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Welcome to Urban Things API
 
-## Welcome
+Urban Things provides a comprehensive multi-tenant e-commerce platform API built with Laravel 11. This API enables you to manage products, categories, orders, team members, and more across multiple organizations.
 
-There are two ways to build use applications with [Urban-things.com](https://app.urban-things.com), or integrate with it:
+## Key Features
+
+- **Multi-Tenant Architecture** - Users can belong to multiple organizations
+- **Role-Based Access Control** - ADMIN and MEMBER roles per tenant
+- **Team Member Management** - Add, update, and remove team members
+- **Product & Category Management** - Full CRUD operations
+- **Order Processing** - Complete order management system
+- **Event-Driven** - Webhook integrations and event publishing
+- **Secure Authentication** - Laravel Sanctum token-based auth
+
+## Base URL
+
+```
+Production: https://faisalshop.mvp-apps.ae
+Development: http://localhost:3000
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints require authentication using Bearer tokens (Laravel Sanctum).
 
-```json
-"headers": {
-  "Authorization": "Bearer {token}"
+### Getting a Token
+
+First, authenticate to receive a token:
+
+```bash
+POST /api/v2/admin/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "your-password"
 }
 ```
+
+### Using the Token
+
+Include the token in the Authorization header for all subsequent requests:
+
+```bash
+Authorization: Bearer {your-token}
+```
+
+## Multi-Tenancy
+
+Most endpoints require a tenant context. Include the tenant ID in the header:
+
+```bash
+X-Tenant-ID: 123
+```
+
+This ensures data isolation and proper access control across different organizations.
+
+## API Versioning
+
+The API uses URL-based versioning:
+
+- **v1**: Public consumer-facing endpoints (`/api/v1/...`)
+- **v2**: Admin and management endpoints (`/api/v2/admin/...`)
+
+## Rate Limiting
+
+API requests are rate-limited to ensure fair usage and system stability. If you exceed the limit, you'll receive a `429 Too Many Requests` response.
+
+## Response Format
+
+All responses follow a consistent JSON format:
+
+### Success Response
+```json
+{
+  "data": [...],
+  "message": "Success message"
+}
+```
+
+### Error Response
+```json
+{
+  "error": "Error message"
+}
+```
+
+### Validation Error
+```json
+{
+  "message": "Validation failed",
+  "errors": {
+    "field_name": ["Error message"]
+  }
+}
+```
+
+## Pagination
+
+List endpoints support pagination with the following parameters:
+
+- `page` - Page number (default: 1)
+- `per_page` - Items per page (default: 15)
+
+Paginated responses include:
+```json
+{
+  "data": [...],
+  "current_page": 1,
+  "per_page": 15,
+  "total": 100,
+  "last_page": 7
+}
+```
+
+## Common HTTP Status Codes
+
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized (missing or invalid token)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `422` - Validation Error
+- `429` - Too Many Requests
+- `500` - Server Error
+
+## Need Help?
+
+- Check the specific endpoint documentation for detailed examples
+- Review the [Architecture Guide](/essentials/architecture) for system design
+- Contact support at info@faisalkc.com

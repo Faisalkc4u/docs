@@ -1,97 +1,185 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Urban Things Documentation"
+description: "Multi-tenant e-commerce platform API documentation"
 ---
 
-## Setting up
+## Welcome to Urban Things
 
-Get your documentation site up and running in minutes.
+Urban Things is a powerful multi-tenant e-commerce platform that enables multiple organizations to manage their online stores with complete data isolation, team collaboration, and comprehensive API access.
 
 <Card
-  title="Start here"
+  title="Get Started in Minutes"
   icon="rocket"
-  href="/quickstart"
+  href="/essentials/getting-started"
   horizontal
 >
-  Follow our three step quickstart guide.
+  Follow our quick start guide to create your first tenant and start building.
 </Card>
 
-## Make it yours
+## Core Features
 
-Design a docs site that looks great and empowers your users.
+<CardGroup cols={2}>
+  <Card
+    title="Multi-Tenant Architecture"
+    icon="building"
+    href="/essentials/multi-tenancy"
+  >
+    Users can belong to multiple organizations with different roles and permissions.
+  </Card>
+  <Card
+    title="Team Management"
+    icon="users"
+    href="/api-reference/team-members/list"
+  >
+    Add, update, and manage team members with role-based access control.
+  </Card>
+  <Card
+    title="Product Catalog"
+    icon="box"
+    href="/api-reference/products/list"
+  >
+    Complete product and category management with automatic tenant scoping.
+  </Card>
+  <Card
+    title="Webhook Integration"
+    icon="webhook"
+    href="/api-reference/webhooks/list"
+  >
+    Real-time event notifications for seamless third-party integrations.
+  </Card>
+</CardGroup>
+
+## Quick Links
 
 <Columns cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
+    title="API Reference"
     icon="terminal"
     href="/api-reference/introduction"
   >
-    Auto-generate API documentation from OpenAPI specifications.
+    Explore all available API endpoints with examples and responses.
+  </Card>
+  <Card
+    title="Architecture Guide"
+    icon="diagram-project"
+    href="/essentials/architecture"
+  >
+    Understand the system architecture and database design.
+  </Card>
+  <Card
+    title="Authentication"
+    icon="lock"
+    href="/api-reference/endpoint/login"
+  >
+    Learn how to authenticate and secure your API requests.
+  </Card>
+  <Card
+    title="Multi-Tenancy"
+    icon="shield"
+    href="/essentials/multi-tenancy"
+  >
+    Deep dive into how multi-tenancy works and best practices.
   </Card>
 </Columns>
 
-## Create beautiful pages
+## API Capabilities
 
-Everything you need to create world-class documentation.
+Everything you need to build a complete e-commerce solution:
 
-<Columns cols={2}>
+<CardGroup cols={3}>
   <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
+    title="Authentication"
+    icon="key"
   >
-    Use MDX to style your docs pages.
+    Sanctum token-based auth with Firebase integration
   </Card>
   <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
+    title="Tenant Management"
+    icon="building"
   >
-    Add sample code to demonstrate how to use your product.
+    Create and manage multiple organizations
   </Card>
   <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
+    title="Team Members"
+    icon="user-group"
   >
-    Display images and other media.
+    ADMIN and MEMBER roles per tenant
   </Card>
   <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
+    title="Products"
+    icon="shopping-bag"
   >
-    Write once and reuse across your docs.
+    Full CRUD operations with images and variations
   </Card>
-</Columns>
+  <Card
+    title="Categories"
+    icon="folder-tree"
+  >
+    Organize products with hierarchical categories
+  </Card>
+  <Card
+    title="Orders"
+    icon="cart-shopping"
+  >
+    Complete order processing and management
+  </Card>
+  <Card
+    title="Webhooks"
+    icon="bell"
+  >
+    Event-driven integrations with delivery tracking
+  </Card>
+  <Card
+    title="Ratings"
+    icon="star"
+  >
+    Product reviews and ratings system
+  </Card>
+  <Card
+    title="Addresses"
+    icon="location-dot"
+  >
+    User address management
+  </Card>
+</CardGroup>
 
-## Need inspiration?
+## Tech Stack
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Tabs>
+  <Tab title="Backend">
+    - Laravel 11.9
+    - PHP 8.2+
+    - MySQL (Production)
+    - SQLite (Testing)
+  </Tab>
+  <Tab title="Authentication">
+    - Laravel Sanctum
+    - Bearer Token Auth
+    - Firebase Integration
+  </Tab>
+  <Tab title="Features">
+    - Multi-tenant architecture
+    - Role-based access control
+    - Event-driven webhooks
+    - Automatic tenant scoping
+  </Tab>
+</Tabs>
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card
+    title="Contact Support"
+    icon="envelope"
+    href="mailto:info@faisalkc.com"
+  >
+    Get help from our support team
+  </Card>
+  <Card
+    title="View on GitHub"
+    icon="github"
+    href="https://github.com"
+  >
+    Contribute or report issues
+  </Card>
+</CardGroup>

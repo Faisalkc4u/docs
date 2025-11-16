@@ -1,0 +1,49 @@
+---
+title: "Who Am I"
+openapi: "GET /api/v2/admin/who_am_i"
+---
+
+## Overview
+
+Get information about the currently authenticated user, including their tenants and roles.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+
+## Response Details
+
+Returns:
+- User profile information
+- List of tenants the user belongs to
+- Role in each tenant
+- Activity status
+
+## Use Cases
+
+- Verify authentication status
+- Get user's tenant list for tenant selection
+- Check user's role before performing actions
+- Display user profile information
+
+## Example Usage
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/who_am_i \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+const response = await axios.get(
+  '/api/v2/admin/who_am_i',
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+
+console.log('User:', response.data.user);
+console.log('Tenants:', response.data.tenants);
+```

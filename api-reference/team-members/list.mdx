@@ -1,0 +1,46 @@
+---
+title: "List Team Members"
+openapi: "GET /api/v2/admin/team-members/{tenantId}"
+---
+
+## Overview
+
+Retrieve all team members for a specific tenant (organization). This endpoint returns paginated results with member details including their role and activity status.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the specified tenant
+
+## Security
+
+Users from different tenants will receive empty results (not a 403 error). This ensures tenant isolation while maintaining a consistent API experience.
+
+## Response Details
+
+The response includes:
+- User basic information (id, name, email)
+- Role within the tenant (ADMIN or MEMBER)
+- Activity status (is_active)
+- Last activity timestamp
+
+## Performance
+
+This endpoint uses an optimized single JOIN query instead of N+1 queries for better performance with large teams.
+
+## Example Usage
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/team-members/1 \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+const response = await axios.get(
+  `/api/v2/admin/team-members/${tenantId}`,
+  {
+    headers: { Authorization: `Bearer ${token}` }
+  }
+);
+```

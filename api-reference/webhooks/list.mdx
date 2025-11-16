@@ -1,0 +1,40 @@
+---
+title: "List Webhooks"
+openapi: "GET /api/v2/admin/webhooks/{tenantId}"
+---
+
+## Overview
+
+Retrieve all webhook subscriptions for a specific tenant. Webhooks allow you to receive real-time notifications about events in your tenant.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+
+## Webhook Events
+
+Common webhook events include:
+- User registered
+- Order created
+- Product updated
+- Team member added/removed
+
+## Example Usage
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/webhooks/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+const response = await axios.get(
+  `/api/v2/admin/webhooks/${tenantId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```

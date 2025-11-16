@@ -1,43 +1,69 @@
-# Mintlify Starter Kit
+# Urban Things API Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Comprehensive documentation for the Urban Things multi-tenant e-commerce platform API.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## 📚 Documentation Structure
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+### Getting Started
+- **Introduction** - Overview of the Urban Things platform
+- **Quick Start Guide** - Get up and running in minutes
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+### Core Concepts
+- **Architecture** - System design and database schema
+- **Multi-Tenancy** - How multi-tenancy works
+- **Webhooks & Events** - Event-driven integrations
 
-## Development
+### API Reference
+Complete documentation for all API endpoints:
+- **Authentication** - Login, register, logout
+- **Tenants** - Organization management
+- **Team Members** - Team collaboration
+- **Products** - Product catalog management
+- **Categories** - Category organization
+- **Webhooks** - Event subscriptions
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+## 🚀 Quick Start
 
+### Preview Locally
+```bash
+npm install
+npm run dev
 ```
-npm i -g mint
-```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+### Deploy
+Push to your repository - Mintlify will automatically deploy.
 
-```
-mint dev
-```
+## 📖 Key Files
 
-View your local preview at `http://localhost:3000`.
+- `docs.json` - Navigation and configuration
+- `index.mdx` - Homepage
+- `essentials/` - Core concept guides
+- `api-reference/` - API endpoint documentation
+- `openapi-extended.json` - Complete OpenAPI 3.1.0 specification
 
-## Publishing changes
+## 🔗 Links
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+- **Production API**: https://faisalshop.mvp-apps.ae
+- **Support**: info@faisalkc.com
+- **Dashboard**: https://app.urban-things.com
 
-## Need help?
+## 📊 Documentation Stats
 
-### Troubleshooting
+- 27 API endpoints documented
+- 4 comprehensive guides
+- 100+ code examples
+- Complete OpenAPI specification
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+## 🛠️ Built With
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- [Mintlify](https://mintlify.com) - Documentation platform
+- OpenAPI 3.1.0 specification
+- MDX for rich content
+
+## 📝 License
+
+See LICENSE file for details.
+
+---
+
+**Version**: 2.0.0 | **Last Updated**: November 16, 2025

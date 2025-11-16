@@ -1,0 +1,69 @@
+---
+title: "Create Webhook"
+openapi: "POST /api/v2/admin/webhooks/{tenantId}"
+---
+
+## Overview
+
+Subscribe to webhook events for your tenant. When events occur, the system will send HTTP POST requests to your specified URL.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the tenant
+
+## Webhook Delivery
+
+- Events are delivered via HTTP POST to your URL
+- Includes event type and payload
+- Retries on failure with exponential backoff
+- Delivery status tracked in webhook_deliveries table
+
+## Security
+
+- Use HTTPS URLs for webhook endpoints
+- Verify webhook signatures to ensure authenticity
+- Implement idempotency to handle duplicate deliveries
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/webhooks/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://your-app.com/webhooks",
+    "events": ["user.registered", "order.created"]
+  }'
+```
+
+```javascript
+await axios.post(
+  `/api/v2/admin/webhooks/${tenantId}`,
+  {
+    url: 'https://your-app.com/webhooks',
+    events: ['user.registered', 'order.created']
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```
+
+## Webhook Payload Example
+
+```json
+{
+  "event": "user.registered",
+  "tenant_id": 123,
+  "timestamp": "2025-11-16T10:30:00Z",
+  "data": {
+    "user_id": 42,
+    "email": "user@example.com",
+    "role": "MEMBER"
+  }
+}
+```

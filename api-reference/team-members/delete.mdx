@@ -1,0 +1,59 @@
+---
+title: "Remove Team Member"
+openapi: "DELETE /api/v2/admin/team-members/{tenantId}/{userId}"
+---
+
+## Overview
+
+Remove a user from a tenant. This only removes the user's association with the tenant - the user account itself is not deleted and they can still be members of other tenants.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the specified tenant
+
+## Behavior
+
+- Removes the user-tenant relationship (deletes the pivot record)
+- User account remains active in the system
+- User can still access other tenants they belong to
+- Does not affect the user's data in other tenants
+
+## Example Usage
+
+```bash
+curl -X DELETE \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/team-members/1/5 \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+await axios.delete(
+  `/api/v2/admin/team-members/${tenantId}/${userId}`,
+  {
+    headers: { Authorization: `Bearer ${token}` }
+  }
+);
+```
+
+## Error Responses
+
+### User Not Found (404)
+```json
+{
+  "error": "User not found"
+}
+```
+
+### Not a Member (400)
+```json
+{
+  "error": "User is not a member of this Organization"
+}
+```
+
+## Important Notes
+
+- Removing a user does not delete their account
+- The user can be re-added to the tenant later
+- Consider implementing a "leave tenant" endpoint for self-service removal

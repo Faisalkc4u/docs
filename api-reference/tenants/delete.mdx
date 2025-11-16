@@ -1,0 +1,48 @@
+---
+title: "Delete Tenant"
+openapi: "DELETE /api/v2/admin/tenants/{id}"
+---
+
+## Overview
+
+Delete a tenant (organization). This uses soft deletes, so the tenant can be recovered if needed.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the tenant
+
+## Soft Deletes
+
+Tenants are soft-deleted, meaning:
+- The tenant is marked as deleted but not removed from the database
+- Associated data is preserved
+- The tenant can be restored if needed
+- Deleted tenants don't appear in normal queries
+
+## Important Considerations
+
+Before deleting a tenant:
+- Ensure all team members are notified
+- Export any important data
+- Consider archiving instead of deleting
+- Review associated products, orders, and customers
+
+## Example Usage
+
+```bash
+curl -X DELETE \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/tenants/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+await axios.delete(
+  `/api/v2/admin/tenants/${tenantId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```

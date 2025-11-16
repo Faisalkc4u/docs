@@ -1,0 +1,447 @@
+---
+title: "Webhooks & Events"
+description: "Real-time event notifications and webhook integrations"
+---
+
+## Overview
+
+Urban Things uses an event-driven architecture with webhooks to notify your applications about important events in real-time.
+
+## How It Works
+
+<Steps>
+  <Step title="Subscribe to Events">
+    Create a webhook subscription for the events you want to receive
+  </Step>
+  <Step title="Event Occurs">
+    When an event happens (e.g., user registered, order created)
+  </Step>
+  <Step title="Outbox Pattern">
+    Event is recorded in the integration_outbox table for reliability
+  </Step>
+  <Step title="Background Processing">
+    A background job processes the event and sends it to your webhook URL
+  </Step>
+  <Step title="Delivery Tracking">
+    Delivery status is tracked in webhook_deliveries table
+  </Step>
+  <Step title="Retry Logic">
+    Failed deliveries are retried with exponential backoff
+  </Step>
+</Steps>
+
+## Available Events
+
+### User Events
+- `user.registered` - New user added to tenant
+- `user.updated` - User information changed
+- `user.removed` - User removed from tenant
+
+### Order Events
+- `order.created` - New order placed
+- `order.updated` - Order status changed
+- `order.completed` - Order fulfilled
+- `order.cancelled` - Order cancelled
+
+### Product Events
+- `product.created` - New product added
+- `product.updated` - Product information changed
+- `product.deleted` - Product removed
+
+### Category Events
+- `category.created` - New category added
+- `category.updated` - Category information changed
+- `category.deleted` - Category removed
+
+## Creating a Webhook
+
+### Step 1: Prepare Your Endpoint
+
+Create an HTTPS endpoint that can receive POST requests:
+
+```javascript
+// Express.js example
+app.post('/webhooks/urban-things', (req, res) => {
+  const { event, tenant_id, timestamp, data } = req.body;
+  
+  // Verify signature (recommended)
+  // Process event
+  
+  // Respond quickly (within 5 seconds)
+  res.status(200).json({ received: true });
+});
+```
+
+### Step 2: Subscribe to Events
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/webhooks/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://your-app.com/webhooks/urban-things",
+    "events": ["user.registered", "order.created"]
+  }'
+```
+
+## Webhook Payload Format
+
+All webhook payloads follow this structure:
+
+```json
+{
+  "event": "user.registered",
+  "tenant_id": 123,
+  "timestamp": "2025-11-16T10:30:00Z",
+  "data": {
+    "user_id": 42,
+    "email": "user@example.com",
+    "role": "MEMBER",
+    "invited_by": 17
+  }
+}
+```
+
+## Event Payload Examples
+
+### User Registered
+
+```json
+{
+  "event": "user.registered",
+  "tenant_id": 123,
+  "timestamp": "2025-11-16T10:30:00Z",
+  "data": {
+    "user_id": 42,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "MEMBER",
+    "invited_by": 17
+  }
+}
+```
+
+### Order Created
+
+```json
+{
+  "event": "order.created",
+  "tenant_id": 123,
+  "timestamp": "2025-11-16T10:30:00Z",
+  "data": {
+    "order_id": 1001,
+    "user_id": 42,
+    "total": 299.99,
+    "items_count": 3,
+    "status": "pending"
+  }
+}
+```
+
+### Product Updated
+
+```json
+{
+  "event": "product.updated",
+  "tenant_id": 123,
+  "timestamp": "2025-11-16T10:30:00Z",
+  "data": {
+    "product_id": 55,
+    "name": "Wireless Headphones",
+    "price": 199.99,
+    "stock": 45,
+    "changed_fields": ["price", "stock"]
+  }
+}
+```
+
+## Security Best Practices
+
+### 1. Use HTTPS Only
+
+<Warning>
+Always use HTTPS URLs for webhook endpoints. HTTP URLs are not secure and may be rejected.
+</Warning>
+
+```bash
+# ✅ Good
+"url": "https://your-app.com/webhooks"
+
+# ❌ Bad
+"url": "http://your-app.com/webhooks"
+```
+
+### 2. Verify Webhook Signatures
+
+Verify that requests are actually from Urban Things:
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(payload))
+    .digest('hex');
+    
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+
+app.post('/webhooks', (req, res) => {
+  const signature = req.headers['x-webhook-signature'];
+  
+  if (!verifyWebhookSignature(req.body, signature, WEBHOOK_SECRET)) {
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+  
+  // Process webhook
+  res.status(200).json({ received: true });
+});
+```
+
+### 3. Implement Idempotency
+
+Handle duplicate deliveries gracefully:
+
+```javascript
+const processedEvents = new Set();
+
+app.post('/webhooks', async (req, res) => {
+  const eventId = req.headers['x-event-id'];
+  
+  // Check if already processed
+  if (processedEvents.has(eventId)) {
+    return res.status(200).json({ received: true, duplicate: true });
+  }
+  
+  // Process event
+  await processEvent(req.body);
+  
+  // Mark as processed
+  processedEvents.add(eventId);
+  
+  res.status(200).json({ received: true });
+});
+```
+
+### 4. Respond Quickly
+
+<Note>
+Respond within 5 seconds to avoid timeouts. Process heavy tasks asynchronously.
+</Note>
+
+```javascript
+app.post('/webhooks', async (req, res) => {
+  // Respond immediately
+  res.status(200).json({ received: true });
+  
+  // Process asynchronously
+  processEventAsync(req.body).catch(console.error);
+});
+```
+
+## Retry Logic
+
+Failed webhook deliveries are automatically retried:
+
+<CardGroup cols={2}>
+  <Card title="Retry Schedule" icon="clock">
+    - 1st retry: 1 minute
+    - 2nd retry: 5 minutes
+    - 3rd retry: 15 minutes
+    - 4th retry: 1 hour
+    - 5th retry: 6 hours
+  </Card>
+  <Card title="Failure Conditions" icon="triangle-exclamation">
+    - HTTP status 5xx
+    - Connection timeout
+    - DNS resolution failure
+    - SSL/TLS errors
+  </Card>
+</CardGroup>
+
+## Monitoring Deliveries
+
+Check webhook delivery status:
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/webhooks/123/deliveries \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+Response includes:
+- Delivery attempts
+- Success/failure status
+- Response codes
+- Timestamps
+- Error messages
+
+## Testing Webhooks
+
+### Local Development
+
+Use tools like ngrok to expose your local server:
+
+```bash
+# Start ngrok
+ngrok http 3000
+
+# Use the ngrok URL for webhook
+https://abc123.ngrok.io/webhooks
+```
+
+### Test Events
+
+Trigger test events manually:
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/webhooks/123/test \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "event": "user.registered"
+  }'
+```
+
+## Common Issues
+
+### Webhook Not Receiving Events
+
+<AccordionGroup>
+  <Accordion title="Check URL accessibility">
+    Ensure your webhook URL is publicly accessible and returns 200 OK
+  </Accordion>
+  <Accordion title="Verify HTTPS">
+    HTTP URLs may be rejected. Use HTTPS with valid SSL certificate
+  </Accordion>
+  <Accordion title="Check firewall">
+    Ensure your firewall allows incoming requests from Urban Things
+  </Accordion>
+  <Accordion title="Review logs">
+    Check webhook_deliveries table for error messages
+  </Accordion>
+</AccordionGroup>
+
+### Duplicate Events
+
+This is normal behavior. Implement idempotency to handle duplicates:
+
+```javascript
+// Store processed event IDs in database
+const isProcessed = await db.webhookEvents.exists({ eventId });
+if (isProcessed) {
+  return res.status(200).json({ received: true });
+}
+```
+
+### Slow Processing
+
+Move heavy processing to background jobs:
+
+```javascript
+app.post('/webhooks', async (req, res) => {
+  // Queue for background processing
+  await queue.add('process-webhook', req.body);
+  
+  // Respond immediately
+  res.status(200).json({ received: true });
+});
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Respond Fast" icon="bolt">
+    Always respond within 5 seconds, process asynchronously
+  </Card>
+  <Card title="Verify Signatures" icon="shield-check">
+    Validate webhook signatures to ensure authenticity
+  </Card>
+  <Card title="Handle Duplicates" icon="copy">
+    Implement idempotency using event IDs
+  </Card>
+  <Card title="Log Everything" icon="file-lines">
+    Keep detailed logs for debugging and monitoring
+  </Card>
+  <Card title="Use HTTPS" icon="lock">
+    Only use HTTPS endpoints with valid certificates
+  </Card>
+  <Card title="Monitor Failures" icon="chart-line">
+    Set up alerts for webhook delivery failures
+  </Card>
+</CardGroup>
+
+## Example Implementation
+
+Complete webhook handler example:
+
+```javascript
+const express = require('express');
+const crypto = require('crypto');
+const app = express();
+
+app.use(express.json());
+
+// Store processed events (use database in production)
+const processedEvents = new Set();
+
+app.post('/webhooks/urban-things', async (req, res) => {
+  try {
+    // 1. Verify signature
+    const signature = req.headers['x-webhook-signature'];
+    if (!verifySignature(req.body, signature)) {
+      return res.status(401).json({ error: 'Invalid signature' });
+    }
+    
+    // 2. Check for duplicates
+    const eventId = req.headers['x-event-id'];
+    if (processedEvents.has(eventId)) {
+      return res.status(200).json({ received: true, duplicate: true });
+    }
+    
+    // 3. Respond immediately
+    res.status(200).json({ received: true });
+    
+    // 4. Process asynchronously
+    processWebhookAsync(req.body, eventId).catch(console.error);
+    
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+async function processWebhookAsync(payload, eventId) {
+  const { event, tenant_id, data } = payload;
+  
+  // Process based on event type
+  switch (event) {
+    case 'user.registered':
+      await handleUserRegistered(tenant_id, data);
+      break;
+    case 'order.created':
+      await handleOrderCreated(tenant_id, data);
+      break;
+    // ... other events
+  }
+  
+  // Mark as processed
+  processedEvents.add(eventId);
+}
+
+app.listen(3000, () => {
+  console.log('Webhook server running on port 3000');
+});
+```
+
+## Need Help?
+
+<Card title="Contact Support" icon="envelope" href="mailto:info@faisalkc.com">
+  Having issues with webhooks? Contact our support team
+</Card>

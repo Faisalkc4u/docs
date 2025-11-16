@@ -1,0 +1,47 @@
+---
+title: "Logout"
+openapi: "POST /api/v2/admin/logout"
+---
+
+## Overview
+
+Logout from the current session by invalidating the authentication token.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+
+## Token Invalidation
+
+- The current token is immediately invalidated
+- The token cannot be used for future requests
+- Other active sessions remain valid
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/logout \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+await axios.post(
+  '/api/v2/admin/logout',
+  {},
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+
+// Clear token from local storage
+localStorage.removeItem('auth_token');
+```
+
+## Security Best Practices
+
+- Always logout when done using the application
+- Clear tokens from client-side storage
+- Implement automatic logout on token expiration

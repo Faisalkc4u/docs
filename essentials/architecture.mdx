@@ -1,0 +1,138 @@
+---
+title: "Architecture Overview"
+description: "Understanding the multi-tenant e-commerce platform architecture"
+---
+
+## System Architecture
+
+Urban Things is built on a multi-tenant architecture using Laravel 11, enabling multiple organizations to use the platform while maintaining complete data isolation.
+
+## Tech Stack
+
+<CardGroup cols={2}>
+  <Card title="Backend" icon="server">
+    - Laravel 11.9
+    - PHP 8.2+
+    - MySQL (Production)
+    - SQLite (Testing)
+  </Card>
+  <Card title="Authentication" icon="lock">
+    - Laravel Sanctum
+    - Bearer Token Auth
+    - Firebase Integration
+  </Card>
+</CardGroup>
+
+## Core Concepts
+
+### Multi-Tenancy Model
+
+The platform uses a **many-to-many relationship** between Users and Tenants:
+
+- Users can belong to multiple organizations (tenants)
+- Each tenant can have multiple users
+- Roles are defined per tenant (ADMIN, MEMBER)
+- Complete data isolation between tenants
+
+### Database Schema
+
+#### Users Table
+Standard user accounts that can belong to multiple tenants:
+- Basic info: id, name, email, password
+- Status: is_active, user_type
+- Preferences: theme, language, timezone
+- Notifications: email_marketing, email_system, push_system
+
+#### Tenants Table
+Organizations using the platform:
+- id, name
+- Timestamps
+- Soft deletes enabled
+
+#### Tenant_Users Pivot Table
+Links users to tenants with metadata:
+- tenant_id, user_id
+- role (ADMIN, MEMBER)
+- is_active
+- last_active_at
+- Unique constraint on [tenant_id, user_id]
+
+## Automatic Tenant Scoping
+
+Models using the `HasTenant` trait are automatically filtered by tenant:
+
+```php
+// Automatically filtered by X-Tenant-ID header
+$products = Product::all();
+
+// Bypass scoping when needed
+$allProducts = Product::withAnyTenant()->get();
+
+// Force specific tenant
+$products = Product::forTenant($tenantId)->get();
+```
+
+## Event-Driven Architecture
+
+The system uses events and webhooks for integrations:
+
+<Steps>
+  <Step title="Event Triggered">
+    User actions trigger events (e.g., UserRegistered)
+  </Step>
+  <Step title="Outbox Pattern">
+    Events recorded in integration_outbox table
+  </Step>
+  <Step title="Background Processing">
+    Jobs publish events to webhook subscribers
+  </Step>
+  <Step title="Delivery Tracking">
+    Webhook deliveries tracked for reliability
+  </Step>
+</Steps>
+
+## Security Features
+
+<CardGroup cols={2}>
+  <Card title="Tenant Isolation" icon="shield">
+    Automatic data scoping prevents cross-tenant access
+  </Card>
+  <Card title="Role-Based Access" icon="user-shield">
+    ADMIN role required for sensitive operations
+  </Card>
+  <Card title="Token Authentication" icon="key">
+    Sanctum tokens for secure API access
+  </Card>
+  <Card title="Input Validation" icon="check">
+    All inputs validated before processing
+  </Card>
+</CardGroup>
+
+## Performance Optimizations
+
+### Query Optimization
+- Single JOIN queries instead of N+1
+- Eager loading for relationships
+- Pagination for large datasets
+
+### Caching Strategy
+- Route caching
+- Config caching
+- Query result caching
+
+## Scalability
+
+The architecture supports horizontal scaling:
+- Stateless API design
+- Database read replicas
+- Queue workers for background jobs
+- CDN for static assets
+
+## Migration Context
+
+<Note>
+This project was originally single-tenant and is being migrated to multi-tenant architecture. The migration includes:
+- Adding tenant scoping to existing models
+- Implementing role-based access control
+- Creating middleware for automatic tenant filtering
+</Note>

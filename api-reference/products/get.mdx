@@ -1,0 +1,39 @@
+---
+title: "Get Product"
+openapi: "GET /api/v2/admin/products/{id}"
+---
+
+## Overview
+
+Retrieve detailed information about a specific product by ID. The product must belong to the tenant specified in the X-Tenant-ID header.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+- Requires X-Tenant-ID header
+
+## Tenant Isolation
+
+Products are automatically filtered by tenant. If you request a product that belongs to a different tenant, you'll receive a 404 error.
+
+## Example Usage
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/products/42 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123'
+```
+
+```javascript
+const response = await axios.get(
+  `/api/v2/admin/products/${productId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Tenant-ID': tenantId
+    }
+  }
+);
+```

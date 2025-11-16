@@ -1,0 +1,39 @@
+---
+title: "Update Tenant"
+openapi: "POST /api/v2/admin/tenants/{id}"
+---
+
+## Overview
+
+Update tenant information such as name and settings. Only ADMIN users can update tenant details.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must have ADMIN role in the tenant
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/tenants/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Updated Store Name"
+  }'
+```
+
+```javascript
+await axios.post(
+  `/api/v2/admin/tenants/${tenantId}`,
+  {
+    name: 'Updated Store Name'
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```

@@ -1,0 +1,42 @@
+---
+title: "Toggle Category Publish Status"
+openapi: "PATCH /api/v2/admin/category/{id}"
+---
+
+## Overview
+
+Toggle the publish status of a category. This allows you to show or hide categories from public view without deleting them.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+- Requires X-Tenant-ID header
+
+## Use Cases
+
+- Temporarily hide categories during inventory updates
+- Seasonal category management
+- A/B testing different category structures
+
+## Example Usage
+
+```bash
+curl -X PATCH \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/category/5 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123'
+```
+
+```javascript
+await axios.patch(
+  `/api/v2/admin/category/${categoryId}`,
+  {},
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Tenant-ID': tenantId
+    }
+  }
+);
+```

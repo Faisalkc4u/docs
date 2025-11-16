@@ -1,0 +1,50 @@
+---
+title: "Register Account"
+openapi: "POST /api/v2/admin/register"
+---
+
+## Overview
+
+Create a new user account. After registration, you can create or join tenants.
+
+## No Authentication Required
+
+This is a public endpoint - no Bearer token needed.
+
+## Password Requirements
+
+- Minimum 8 characters
+- Consider using strong passwords with mixed characters
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/register \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "securepassword123",
+    "password_confirmation": "securepassword123"
+  }'
+```
+
+```javascript
+await axios.post(
+  '/api/v2/admin/register',
+  {
+    name: 'John Doe',
+    email: 'john@example.com',
+    password: 'securepassword123',
+    password_confirmation: 'securepassword123'
+  }
+);
+```
+
+## Next Steps
+
+After registration:
+1. Login to receive your authentication token
+2. Create a new tenant or get invited to existing ones
+3. Start managing your e-commerce platform

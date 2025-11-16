@@ -1,0 +1,32 @@
+---
+title: "Get Tenant Details"
+openapi: "GET /api/v2/admin/tenants/{id}"
+---
+
+## Overview
+
+Retrieve detailed information about a specific tenant. You must be a member of the tenant to view its details.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+
+## Example Usage
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/tenants/123 \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+```javascript
+const response = await axios.get(
+  `/api/v2/admin/tenants/${tenantId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+```

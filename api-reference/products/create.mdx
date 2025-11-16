@@ -1,0 +1,54 @@
+---
+title: "Create Product"
+openapi: "POST /api/v2/admin/products"
+---
+
+## Overview
+
+Create a new product in your tenant's catalog. Products are automatically scoped to the tenant specified in the X-Tenant-ID header.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+- Requires X-Tenant-ID header
+
+## Tenant Scoping
+
+Products are automatically associated with the tenant from the X-Tenant-ID header. You don't need to manually set the tenant_id in the request body.
+
+## Example Usage
+
+```bash
+curl -X POST \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/products \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Premium Coffee Beans",
+    "description": "Organic arabica coffee beans",
+    "price": 24.99,
+    "stock": 100,
+    "category_id": 5
+  }'
+```
+
+```javascript
+await axios.post(
+  '/api/v2/admin/products',
+  {
+    name: 'Premium Coffee Beans',
+    description: 'Organic arabica coffee beans',
+    price: 24.99,
+    stock: 100,
+    category_id: 5
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Tenant-ID': tenantId
+    }
+  }
+);
+```
