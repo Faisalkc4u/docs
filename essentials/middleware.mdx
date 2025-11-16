@@ -1,0 +1,259 @@
+---
+title: "Middleware"
+description: "Understanding API middleware and request validation"
+---
+
+## Overview
+
+The API uses middleware to handle cross-cutting concerns like authentication, tenant validation, and request processing. Understanding these middleware components is essential for proper API integration.
+
+## Authentication Middleware
+
+### Sanctum Authentication
+
+All protected endpoints require authentication using Laravel Sanctum tokens.
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/products \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+**How it works:**
+1. User logs in via `/api/v2/admin/login`
+2. Server returns a Bearer token
+3. Include token in `Authorization` header for subsequent requests
+4. Token is validated on each request
+
+**Error Response (401 Unauthorized):**
+```json
+{
+  "message": "Unauthenticated."
+}
+```
+
+## Tenant Middleware
+
+### X-Tenant-ID Header Validation
+
+The `tenant` middleware ensures multi-tenancy isolation by validating the `X-Tenant-ID` header on protected routes.
+
+#### How It Works
+
+1. **Header Check**: Validates that `X-Tenant-ID` header is present
+2. **Request Injection**: Adds `tenant_id` to the request object
+3. **Controller Access**: Controllers can access via `$request->tenant_id`
+
+#### Protected Routes
+
+The following route groups require the `X-Tenant-ID` header:
+
+- `/api/v2/admin/products/*` - Product management
+- `/api/v2/admin/orders/*` - Order management
+- Any route with `->middleware('tenant')`
+
+#### Example Request
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/products \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123'
+```
+
+```javascript
+const response = await axios.get('/api/v2/admin/products', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'X-Tenant-ID': tenantId
+  }
+});
+```
+
+#### Error Response (400 Bad Request)
+
+If the `X-Tenant-ID` header is missing:
+
+```json
+{
+  "success": false,
+  "message": "X-Tenant-ID header is required"
+}
+```
+
+### Benefits of Tenant Middleware
+
+1. **Data Isolation**: Ensures users only access data from their tenant
+2. **Security**: Prevents cross-tenant data leakage
+3. **Simplicity**: Controllers automatically receive validated tenant_id
+4. **Consistency**: Centralized validation logic
+
+## Middleware Stack
+
+### Typical Request Flow
+
+```
+1. Request arrives at server
+   ↓
+2. CORS middleware (if applicable)
+   ↓
+3. Authentication middleware (auth:sanctum)
+   - Validates Bearer token
+   - Loads authenticated user
+   ↓
+4. Tenant middleware (tenant)
+   - Validates X-Tenant-ID header
+   - Injects tenant_id into request
+   ↓
+5. Controller receives request
+   - Access user via Auth::id()
+   - Access tenant via $request->tenant_id
+   ↓
+6. Response returned to client
+```
+
+## Applying Middleware to Routes
+
+### In Route Definitions
+
+```php
+// Single middleware
+Route::get('/products', [ProductController::class, 'index'])
+    ->middleware('tenant');
+
+// Multiple middleware
+Route::get('/products', [ProductController::class, 'index'])
+    ->middleware(['auth:sanctum', 'tenant']);
+
+// Route group
+Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::post('/products', [ProductController::class, 'store']);
+});
+```
+
+## Best Practices
+
+### 1. Always Include Required Headers
+
+```javascript
+// ✅ Good - includes both headers
+const config = {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'X-Tenant-ID': tenantId
+  }
+};
+
+// ❌ Bad - missing tenant header
+const config = {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+};
+```
+
+### 2. Handle Middleware Errors
+
+```javascript
+try {
+  const response = await axios.get('/api/v2/admin/products', config);
+  return response.data;
+} catch (error) {
+  if (error.response?.status === 400) {
+    console.error('Missing X-Tenant-ID header');
+  } else if (error.response?.status === 401) {
+    console.error('Authentication failed');
+  }
+  throw error;
+}
+```
+
+### 3. Store Tenant ID Securely
+
+```javascript
+// Store tenant ID after login or tenant selection
+localStorage.setItem('tenant_id', tenantId);
+
+// Retrieve for API calls
+const tenantId = localStorage.getItem('tenant_id');
+```
+
+### 4. Create API Client Helper
+
+```javascript
+// api-client.js
+import axios from 'axios';
+
+const apiClient = axios.create({
+  baseURL: 'https://faisalshop.mvp-apps.ae/api/v2/admin'
+});
+
+// Add interceptor to include headers automatically
+apiClient.interceptors.request.use(config => {
+  const token = localStorage.getItem('auth_token');
+  const tenantId = localStorage.getItem('tenant_id');
+  
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  
+  if (tenantId) {
+    config.headers['X-Tenant-ID'] = tenantId;
+  }
+  
+  return config;
+});
+
+export default apiClient;
+```
+
+## Troubleshooting
+
+### Missing X-Tenant-ID Header
+
+**Problem**: Getting 400 error with "X-Tenant-ID header is required"
+
+**Solution**: Ensure the header is included in every request to tenant-protected routes
+
+```javascript
+// Check if header is being sent
+console.log(config.headers['X-Tenant-ID']); // Should not be undefined
+```
+
+### Invalid Tenant ID
+
+**Problem**: Getting empty results or 404 errors
+
+**Solution**: Verify the tenant ID is correct and the user has access to that tenant
+
+```javascript
+// Verify tenant ID matches user's tenants
+const tenants = await getUserTenants();
+const validTenantId = tenants[0].id;
+```
+
+### Token Expiration
+
+**Problem**: Getting 401 errors after some time
+
+**Solution**: Implement token refresh or re-authentication flow
+
+```javascript
+apiClient.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      // Redirect to login or refresh token
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+## Related Documentation
+
+- [Multi-Tenancy](/essentials/multi-tenancy) - Understanding tenant architecture
+- [Authentication](/api-reference/auth/login) - Login and token management
+- [Getting Started](/essentials/getting-started) - Initial setup guide

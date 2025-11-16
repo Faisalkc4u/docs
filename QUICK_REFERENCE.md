@@ -83,6 +83,14 @@ X-Tenant-ID: 123
 | PATCH | `/api/v2/admin/category/{id}` | Toggle publish |
 | DELETE | `/api/v2/admin/category/{id}` | Delete category |
 
+### Orders
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v2/admin/orders` | List orders |
+| POST | `/api/v2/admin/orders` | Create order |
+| GET | `/api/v2/admin/orders/{id}` | Get order |
+| GET | `/api/v2/admin/orders/my-orders` | Get my orders |
+
 ### Webhooks
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -129,6 +137,24 @@ X-Tenant-ID: 123
 {
   "name": "Category Name",
   "description": "Category description"
+}
+```
+
+### Create Order
+```json
+{
+  "address_id": 2,
+  "payment_type": 1,
+  "total_amount": 99.99,
+  "order_items": [
+    {
+      "product_id": 10,
+      "qty": 2,
+      "amount": 49.99,
+      "size": "Large",
+      "notes": "Extra packaging"
+    }
+  ]
 }
 ```
 
@@ -290,4 +316,4 @@ openapi-generator-cli generate \
 
 ---
 
-**Version**: 2.0.0 | **Updated**: November 16, 2025
+**Version**: 2.1.0 | **Updated**: November 16, 2025

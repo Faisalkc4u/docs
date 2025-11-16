@@ -1,5 +1,72 @@
 # Documentation Changelog
 
+## [2.1.0] - 2025-11-16
+
+### Added - Order Management & Middleware Documentation
+
+#### 🛒 API Reference - Orders (4 endpoints)
+- `GET /api/v2/admin/orders` - List all orders for tenant
+- `POST /api/v2/admin/orders` - Create new order
+- `GET /api/v2/admin/orders/{id}` - Get order details
+- `GET /api/v2/admin/orders/my-orders` - Get authenticated user's orders
+
+#### 🔒 Middleware Documentation
+- **Tenant Middleware Guide** - X-Tenant-ID header validation
+- Authentication middleware patterns
+- Request flow documentation
+- Error handling examples
+- Best practices for API integration
+- Troubleshooting guide
+
+#### 🎯 Order Features
+- Multi-item order support
+- Tenant-scoped order management
+- User order history
+- Product relationship loading
+- Address integration
+- Transaction-based order creation
+- Comprehensive validation
+
+### Changed
+
+#### Updated Navigation
+- Added "Middleware" to Core Concepts section
+- Added "Orders" group to API Reference
+- Reorganized documentation structure
+
+#### Enhanced Multi-Tenancy
+- Added tenant_id to orders table
+- Implemented tenant isolation for orders
+- Updated Order and OrderItem models with relationships
+
+### Technical Details
+
+#### Database Changes
+- Migration: `add_tenant_id_to_orders_table`
+- Added tenant_id column with index to orders table
+- Updated Order model with fillable fields and relationships
+- Updated OrderItem model with fillable fields and relationships
+
+#### New Middleware
+- `CheckTenantId` middleware for X-Tenant-ID validation
+- Registered as 'tenant' alias in bootstrap/app.php
+- Applied to products and orders routes
+
+#### Controller Updates
+- Created `APIOrderController` with full CRUD operations
+- Fixed bugs from original OrderController
+- Added proper validation and error handling
+- Implemented eager loading for relationships
+
+### Documentation Statistics
+
+- **Total Pages**: 37+ documentation pages
+- **API Endpoints Documented**: 31 endpoints
+- **Code Examples**: 120+ examples
+- **Guides**: 6 comprehensive guides
+
+---
+
 ## [2.0.0] - 2025-11-16
 
 ### Added - Complete Laravel API Documentation

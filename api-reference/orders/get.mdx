@@ -1,0 +1,131 @@
+---
+title: "Get Order"
+openapi: "GET /api/v2/admin/orders/{id}"
+---
+
+## Overview
+
+Retrieve detailed information about a specific order. The order must belong to the tenant specified in the X-Tenant-ID header.
+
+## Authorization
+
+- User must be authenticated with a valid Bearer token
+- User must be a member of the tenant
+- Requires X-Tenant-ID header
+
+## Tenant Scoping
+
+Only orders belonging to the specified tenant can be accessed. Attempting to access an order from a different tenant will return a 404 error.
+
+## Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | integer | The unique identifier of the order |
+
+## Response
+
+Returns detailed order information including:
+- All order items with product details
+- User information
+- Delivery address details
+- Order status and timestamps
+
+## Example Usage
+
+```bash
+curl -X GET \
+  https://faisalshop.mvp-apps.ae/api/v2/admin/orders/42 \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'X-Tenant-ID: 123'
+```
+
+```javascript
+const orderId = 42;
+const response = await axios.get(`/api/v2/admin/orders/${orderId}`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'X-Tenant-ID': tenantId
+  }
+});
+
+console.log(response.data);
+```
+
+## Success Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 42,
+    "user_id": 5,
+    "tenant_id": "123",
+    "address_id": 2,
+    "payment_type": 1,
+    "total_amount": "99.99",
+    "created_at": "2025-11-16T10:30:00.000000Z",
+    "updated_at": "2025-11-16T10:30:00.000000Z",
+    "items": [
+      {
+        "id": 85,
+        "order_id": 42,
+        "product_id": 10,
+        "size": "Large",
+        "qty": 2,
+        "amount": "49.99",
+        "notes": "Extra packaging please",
+        "product": {
+          "id": 10,
+          "name_en": "Premium Coffee Beans",
+          "cover_id": 5,
+          "published": true
+        }
+      },
+      {
+        "id": 86,
+        "order_id": 42,
+        "product_id": 15,
+        "size": "Medium",
+        "qty": 1,
+        "amount": "50.00",
+        "notes": null,
+        "product": {
+          "id": 15,
+          "name_en": "Organic Tea",
+          "cover_id": 8,
+          "published": true
+        }
+      }
+    ],
+    "user": {
+      "id": 5,
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "address": {
+      "id": 2,
+      "street": "123 Main St",
+      "city": "Dubai",
+      "country": "UAE",
+      "postal_code": "12345"
+    }
+  }
+}
+```
+
+## Error Response
+
+### Order Not Found (404)
+
+```json
+{
+  "success": false,
+  "message": "Order not found"
+}
+```
+
+This error occurs when:
+- The order ID doesn't exist
+- The order belongs to a different tenant
+- The order has been deleted
