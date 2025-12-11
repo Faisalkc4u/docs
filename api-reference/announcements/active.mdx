@@ -1,0 +1,162 @@
+---
+title: "Get Active Announcements"
+api: "GET /api/v2/admin/announcements/active"
+description: "Retrieve all active (published and not expired) announcements for the current tenant with read status"
+---
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+</ParamField>
+
+<ParamField header="X-Tenant-ID" type="string" required>
+  The tenant ID to scope the announcements
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of active announcement objects with read status
+  <Expandable title="announcement">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the announcement
+    </ResponseField>
+    <ResponseField name="tenant_id" type="string">
+      The tenant ID this announcement belongs to
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      The announcement title
+    </ResponseField>
+    <ResponseField name="summary" type="string">
+      Brief summary of the announcement
+    </ResponseField>
+    <ResponseField name="content" type="string">
+      Detailed content of the announcement
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Type of announcement: `info`, `warning`, `success`, `alert`
+    </ResponseField>
+    <ResponseField name="priority" type="integer">
+      Priority level: `0` for normal, `1` for high
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current status (will always be `published` for active announcements)
+    </ResponseField>
+    <ResponseField name="is_public" type="boolean">
+      Whether the announcement is public
+    </ResponseField>
+    <ResponseField name="expires_at" type="string">
+      ISO timestamp when the announcement expires
+    </ResponseField>
+    <ResponseField name="topic" type="string">
+      Topic category (e.g., PROMOTIONS, SYSTEM, MAINTENANCE)
+    </ResponseField>
+    <ResponseField name="attachment_type" type="string">
+      Type of attachment: `image`, `link`, `button`
+    </ResponseField>
+    <ResponseField name="attachment_url" type="string">
+      URL of the attachment
+    </ResponseField>
+    <ResponseField name="attachment_metadata" type="object">
+      Additional metadata for the attachment
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO timestamp when the announcement was created
+    </ResponseField>
+    <ResponseField name="is_read" type="boolean">
+      Whether the current user has read this announcement
+    </ResponseField>
+    <ResponseField name="is_dismissed" type="boolean">
+      Whether the current user has dismissed this announcement
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://api.example.com/api/v2/admin/announcements/active" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Tenant-ID: your-tenant-id"
+```
+
+```javascript JavaScript
+const response = await fetch('/api/v2/admin/announcements/active', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN',
+    'X-Tenant-ID': 'your-tenant-id'
+  }
+});
+
+const data = await response.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "tenant_id": "tenant-123",
+      "title": "System Maintenance Scheduled",
+      "summary": "We will be performing scheduled maintenance on our servers.",
+      "content": "Our servers will be undergoing scheduled maintenance on Sunday, December 15th from 2:00 AM to 4:00 AM EST. During this time, you may experience brief service interruptions.",
+      "type": "warning",
+      "priority": 1,
+      "status": "published",
+      "is_public": false,
+      "expires_at": "2024-12-16T00:00:00Z",
+      "topic": "SYSTEM",
+      "attachment_type": null,
+      "attachment_url": null,
+      "attachment_metadata": null,
+      "created_at": "2024-12-11T09:30:00Z",
+      "is_read": false,
+      "is_dismissed": false
+    },
+    {
+      "id": 2,
+      "tenant_id": "tenant-123",
+      "title": "New Feature Release",
+      "summary": "We have released exciting new features!",
+      "content": "Check out our new dashboard improvements and enhanced reporting capabilities.",
+      "type": "success",
+      "priority": 0,
+      "status": "published",
+      "is_public": false,
+      "expires_at": null,
+      "topic": "FEATURES",
+      "attachment_type": "link",
+      "attachment_url": "https://example.com/features",
+      "attachment_metadata": {
+        "button_text": "Learn More"
+      },
+      "created_at": "2024-12-11T14:30:00Z",
+      "is_read": true,
+      "is_dismissed": false
+    }
+  ]
+}
+```
+
+</ResponseExample>
+
+## Notes
+
+- Only returns announcements that are:
+  - Status is `published`
+  - Not scheduled in the future (scheduled_at is null or in the past)
+  - Not expired (expires_at is null or in the future)
+- Results are ordered by priority (high first) then by creation date (newest first)
+- The `is_read` and `is_dismissed` fields are specific to the authenticated user
+- Dismissed announcements are excluded from the results

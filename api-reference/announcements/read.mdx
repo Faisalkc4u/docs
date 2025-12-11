@@ -1,0 +1,78 @@
+---
+title: "Mark Announcement as Read"
+api: "POST /api/v2/admin/announcements/{id}/read"
+description: "Mark a specific announcement as read by the current user"
+---
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+</ParamField>
+
+<ParamField header="X-Tenant-ID" type="string" required>
+  The tenant ID to scope the announcement
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the announcement to mark as read
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Success message
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.example.com/api/v2/admin/announcements/1/read" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Tenant-ID: your-tenant-id"
+```
+
+```javascript JavaScript
+const response = await fetch('/api/v2/admin/announcements/1/read', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN',
+    'X-Tenant-ID': 'your-tenant-id'
+  }
+});
+
+const data = await response.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Success Response
+{
+  "success": true,
+  "message": "Announcement marked as read"
+}
+```
+
+```json Error Response
+{
+  "success": false,
+  "message": "Announcement not found"
+}
+```
+
+</ResponseExample>
+
+## Notes
+
+- This endpoint creates or updates an `announcement_reads` record for the current user
+- If the announcement is already marked as read, the operation is idempotent
+- The `read_at` timestamp is set to the current time
+- Only announcements belonging to the specified tenant can be marked as read

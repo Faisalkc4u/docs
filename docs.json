@@ -98,6 +98,16 @@
             ]
           },
           {
+            "group": "Announcements",
+            "pages": [
+              "api-reference/announcements/list",
+              "api-reference/announcements/create",
+              "api-reference/announcements/active",
+              "api-reference/announcements/read",
+              "api-reference/announcements/dismiss"
+            ]
+          },
+          {
             "group": "Webhooks",
             "pages": [
               "api-reference/webhooks/list",

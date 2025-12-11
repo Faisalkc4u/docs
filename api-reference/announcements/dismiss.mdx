@@ -1,0 +1,80 @@
+---
+title: "Dismiss Announcement"
+api: "POST /api/v2/admin/announcements/{id}/dismiss"
+description: "Dismiss a specific announcement for the current user (hides it from active announcements)"
+---
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+</ParamField>
+
+<ParamField header="X-Tenant-ID" type="string" required>
+  The tenant ID to scope the announcement
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the announcement to dismiss
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Success message
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.example.com/api/v2/admin/announcements/1/dismiss" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Tenant-ID: your-tenant-id"
+```
+
+```javascript JavaScript
+const response = await fetch('/api/v2/admin/announcements/1/dismiss', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN',
+    'X-Tenant-ID': 'your-tenant-id'
+  }
+});
+
+const data = await response.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Success Response
+{
+  "success": true,
+  "message": "Announcement dismissed"
+}
+```
+
+```json Error Response
+{
+  "success": false,
+  "message": "Announcement not found"
+}
+```
+
+</ResponseExample>
+
+## Notes
+
+- This endpoint creates or updates an `announcement_reads` record for the current user
+- Sets the `dismissed` flag to `true` and `dismissed_at` timestamp to the current time
+- Dismissed announcements will not appear in the `/active` endpoint results
+- If the announcement is already dismissed, the operation is idempotent
+- Only announcements belonging to the specified tenant can be dismissed
+- Dismissing an announcement also automatically marks it as read

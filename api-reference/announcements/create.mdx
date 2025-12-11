@@ -1,0 +1,225 @@
+---
+title: "Create Announcement"
+api: "POST /api/v2/admin/announcements"
+description: "Create a new announcement for the current tenant"
+---
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+</ParamField>
+
+<ParamField header="X-Tenant-ID" type="string" required>
+  The tenant ID to create the announcement for
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be `application/json`
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="title" type="string" required>
+  The announcement title (max 255 characters)
+</ParamField>
+
+<ParamField body="summary" type="string">
+  Brief summary of the announcement (max 500 characters)
+</ParamField>
+
+<ParamField body="content" type="string">
+  Detailed content of the announcement
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Type of announcement. Must be one of: `info`, `warning`, `success`, `alert`
+</ParamField>
+
+<ParamField body="priority" type="integer" default="0">
+  Priority level. `0` for normal, `1` for high priority
+</ParamField>
+
+<ParamField body="status" type="string" required>
+  Current status. Must be one of: `draft`, `scheduled`, `published`, `archived`
+</ParamField>
+
+<ParamField body="is_push_enabled" type="boolean" default="false">
+  Whether to enable push notifications for this announcement
+</ParamField>
+
+<ParamField body="is_public" type="boolean" default="false">
+  Whether the announcement is public
+</ParamField>
+
+<ParamField body="scheduled_at" type="string">
+  ISO timestamp when the announcement should be published (required if status is `scheduled`)
+</ParamField>
+
+<ParamField body="expires_at" type="string">
+  ISO timestamp when the announcement expires
+</ParamField>
+
+<ParamField body="topic" type="string">
+  Topic category (e.g., PROMOTIONS, SYSTEM, MAINTENANCE) - max 100 characters
+</ParamField>
+
+### Push Notification Parameters
+
+<ParamField body="push_title" type="string">
+  Custom push notification title (max 100 characters)
+</ParamField>
+
+<ParamField body="push_body" type="string">
+  Custom push notification message (max 200 characters)
+</ParamField>
+
+<ParamField body="push_data" type="object">
+  Additional data to include in push notification payload
+</ParamField>
+
+<ParamField body="target_type" type="string" default="all">
+  Push notification target type. Must be one of: `topic`, `all`, `users`
+</ParamField>
+
+<ParamField body="target_value" type="string">
+  Target value based on target_type:
+  - For `topic`: topic name
+  - For `users`: comma-separated user IDs
+  - For `all`: leave empty
+</ParamField>
+
+### Attachment Parameters
+
+<ParamField body="attachment_type" type="string">
+  Type of attachment. Must be one of: `image`, `link`, `button`
+</ParamField>
+
+<ParamField body="attachment_url" type="string">
+  URL of the attachment (must be valid URL if attachment_type is provided)
+</ParamField>
+
+<ParamField body="attachment_metadata" type="object">
+  Additional metadata for the attachment
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Success message
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The created announcement object (same structure as in list response)
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.example.com/api/v2/admin/announcements" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Tenant-ID: your-tenant-id" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "New Feature Release",
+    "summary": "We have released exciting new features!",
+    "content": "Check out our new dashboard improvements and enhanced reporting capabilities.",
+    "type": "success",
+    "priority": 0,
+    "status": "published",
+    "is_push_enabled": true,
+    "is_public": false,
+    "topic": "FEATURES",
+    "push_title": "New Features Available!",
+    "push_body": "Discover the latest improvements to your dashboard",
+    "target_type": "all"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/v2/admin/announcements', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN',
+    'X-Tenant-ID': 'your-tenant-id',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    title: 'New Feature Release',
+    summary: 'We have released exciting new features!',
+    content: 'Check out our new dashboard improvements and enhanced reporting capabilities.',
+    type: 'success',
+    priority: 0,
+    status: 'published',
+    is_push_enabled: true,
+    is_public: false,
+    topic: 'FEATURES',
+    push_title: 'New Features Available!',
+    push_body: 'Discover the latest improvements to your dashboard',
+    target_type: 'all'
+  })
+});
+
+const data = await response.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Success Response
+{
+  "success": true,
+  "message": "Announcement created successfully",
+  "data": {
+    "id": 2,
+    "tenant_id": "tenant-123",
+    "title": "New Feature Release",
+    "summary": "We have released exciting new features!",
+    "content": "Check out our new dashboard improvements and enhanced reporting capabilities.",
+    "type": "success",
+    "priority": 0,
+    "status": "published",
+    "is_push_enabled": true,
+    "is_public": false,
+    "scheduled_at": null,
+    "expires_at": null,
+    "topic": "FEATURES",
+    "push_title": "New Features Available!",
+    "push_body": "Discover the latest improvements to your dashboard",
+    "push_data": null,
+    "target_type": "all",
+    "target_value": null,
+    "push_status": "pending",
+    "push_error": null,
+    "sent_at": null,
+    "attachment_type": null,
+    "attachment_url": null,
+    "attachment_metadata": null,
+    "created_by": 1,
+    "creator": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@example.com"
+    },
+    "created_at": "2024-12-11T14:30:00Z",
+    "updated_at": "2024-12-11T14:30:00Z"
+  }
+}
+```
+
+```json Validation Error
+{
+  "success": false,
+  "errors": {
+    "title": ["The title field is required."],
+    "type": ["The selected type is invalid."]
+  }
+}
+```
+
+</ResponseExample>

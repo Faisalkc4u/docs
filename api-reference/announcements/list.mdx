@@ -1,0 +1,189 @@
+---
+title: "List Announcements"
+api: "GET /api/v2/admin/announcements"
+description: "Retrieve all announcements for the current tenant with pagination support"
+---
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+</ParamField>
+
+<ParamField header="X-Tenant-ID" type="string" required>
+  The tenant ID to scope the announcements
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="data">
+    <ResponseField name="data" type="array">
+      Array of announcement objects
+      <Expandable title="announcement">
+        <ResponseField name="id" type="integer">
+          Unique identifier for the announcement
+        </ResponseField>
+        <ResponseField name="tenant_id" type="string">
+          The tenant ID this announcement belongs to
+        </ResponseField>
+        <ResponseField name="title" type="string">
+          The announcement title
+        </ResponseField>
+        <ResponseField name="summary" type="string">
+          Brief summary of the announcement
+        </ResponseField>
+        <ResponseField name="content" type="string">
+          Detailed content of the announcement
+        </ResponseField>
+        <ResponseField name="type" type="string">
+          Type of announcement: `info`, `warning`, `success`, `alert`
+        </ResponseField>
+        <ResponseField name="priority" type="integer">
+          Priority level: `0` for normal, `1` for high
+        </ResponseField>
+        <ResponseField name="status" type="string">
+          Current status: `draft`, `scheduled`, `published`, `archived`
+        </ResponseField>
+        <ResponseField name="is_push_enabled" type="boolean">
+          Whether push notifications are enabled
+        </ResponseField>
+        <ResponseField name="is_public" type="boolean">
+          Whether the announcement is public
+        </ResponseField>
+        <ResponseField name="scheduled_at" type="string">
+          ISO timestamp when the announcement is scheduled to be published
+        </ResponseField>
+        <ResponseField name="expires_at" type="string">
+          ISO timestamp when the announcement expires
+        </ResponseField>
+        <ResponseField name="topic" type="string">
+          Topic category (e.g., PROMOTIONS, SYSTEM, MAINTENANCE)
+        </ResponseField>
+        <ResponseField name="push_status" type="string">
+          Push notification status: `pending`, `success`, `failed`
+        </ResponseField>
+        <ResponseField name="sent_at" type="string">
+          ISO timestamp when push notification was sent
+        </ResponseField>
+        <ResponseField name="attachment_type" type="string">
+          Type of attachment: `image`, `link`, `button`
+        </ResponseField>
+        <ResponseField name="attachment_url" type="string">
+          URL of the attachment
+        </ResponseField>
+        <ResponseField name="created_by" type="integer">
+          ID of the user who created the announcement
+        </ResponseField>
+        <ResponseField name="creator" type="object">
+          <Expandable title="creator">
+            <ResponseField name="id" type="integer">
+              Creator's user ID
+            </ResponseField>
+            <ResponseField name="name" type="string">
+              Creator's name
+            </ResponseField>
+            <ResponseField name="email" type="string">
+              Creator's email
+            </ResponseField>
+          </Expandable>
+        </ResponseField>
+        <ResponseField name="created_at" type="string">
+          ISO timestamp when the announcement was created
+        </ResponseField>
+        <ResponseField name="updated_at" type="string">
+          ISO timestamp when the announcement was last updated
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="current_page" type="integer">
+      Current page number
+    </ResponseField>
+    <ResponseField name="last_page" type="integer">
+      Total number of pages
+    </ResponseField>
+    <ResponseField name="per_page" type="integer">
+      Number of items per page
+    </ResponseField>
+    <ResponseField name="total" type="integer">
+      Total number of announcements
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://api.example.com/api/v2/admin/announcements?page=1" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Tenant-ID: your-tenant-id"
+```
+
+```javascript JavaScript
+const response = await fetch('/api/v2/admin/announcements?page=1', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN',
+    'X-Tenant-ID': 'your-tenant-id'
+  }
+});
+
+const data = await response.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Response
+{
+  "success": true,
+  "data": {
+    "data": [
+      {
+        "id": 1,
+        "tenant_id": "tenant-123",
+        "title": "System Maintenance Scheduled",
+        "summary": "We will be performing scheduled maintenance on our servers.",
+        "content": "Our servers will be undergoing scheduled maintenance on Sunday, December 15th from 2:00 AM to 4:00 AM EST. During this time, you may experience brief service interruptions.",
+        "type": "warning",
+        "priority": 1,
+        "status": "published",
+        "is_push_enabled": true,
+        "is_public": false,
+        "scheduled_at": null,
+        "expires_at": "2024-12-16T00:00:00Z",
+        "topic": "SYSTEM",
+        "push_status": "success",
+        "sent_at": "2024-12-11T10:00:00Z",
+        "attachment_type": null,
+        "attachment_url": null,
+        "created_by": 1,
+        "creator": {
+          "id": 1,
+          "name": "Admin User",
+          "email": "admin@example.com"
+        },
+        "created_at": "2024-12-11T09:30:00Z",
+        "updated_at": "2024-12-11T10:00:00Z"
+      }
+    ],
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 20,
+    "total": 1
+  }
+}
+```
+
+</ResponseExample>
